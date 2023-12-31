@@ -7,8 +7,8 @@ input.onButtonPressed(Button.A, function () {
             player.change(LedSpriteProperty.X, -1)
         }
         music.play(music.tonePlayable(156, music.beat(BeatFraction.Sixteenth)), music.PlaybackMode.UntilDone)
-    }else {
-
+    } else {
+    	
     }
 })
 function lose () {
@@ -18,7 +18,7 @@ function lose () {
     startGame = 0
     playerAlive = 0
     gameOver = 1
-    myBlocks.gameOver(game.score())
+    game.gameOver()
 }
 // shooting bullet
 input.onButtonPressed(Button.AB, function () {
@@ -39,8 +39,9 @@ input.onButtonPressed(Button.AB, function () {
             pause(20)
         }
         bullet.delete()
-    } else {
-    	
+    } else if (win == 1){
+    	control.reset()
+        win = 0
     }
 })
 // player movement B
@@ -52,23 +53,16 @@ input.onButtonPressed(Button.B, function () {
             player.change(LedSpriteProperty.X, 1)
         }
         music.play(music.tonePlayable(156, music.beat(BeatFraction.Sixteenth)), music.PlaybackMode.UntilDone)
-    }else{
-
+    } else {
+    	
     }
 })
 // on_off settings
 input.onGesture(Gesture.Shake, function () {
     // startGame
     led.stopAnimation()
-    if (startGame == 0 && menu == 1) {
+    if (menu == 1) {
         menu = 0
-        startGame = 1
-        basic.clearScreen()
-        led.stopAnimation()
-        enemyWave()
-    } else if (startGame == 0 && gameOver == 1) {
-        menu = 0
-        music.ringTone(Note.C)
         startGame = 1
         basic.clearScreen()
         led.stopAnimation()
@@ -77,7 +71,7 @@ input.onGesture(Gesture.Shake, function () {
         menu = 1
     }
 })
-function enemyWave() {
+function enemyWave () {
     basic.pause(100)
     playerAlive = 1
     player = game.createSprite(randint(0, 4), 4)
@@ -96,9 +90,11 @@ function enemyWave() {
             if (enemy.isTouching(player)) {
                 enemy.delete()
                 lose()
+                break;
             } else if (enemy_2.isTouching(player)) {
                 enemy_2.delete()
                 lose()
+                break;
             }
             music.play(music.tonePlayable(156, music.beat(BeatFraction.Sixteenth)), music.PlaybackMode.UntilDone)
             basic.pause(500)
@@ -110,20 +106,40 @@ function enemyWave() {
                 break;
             } else if (enemy.get(LedSpriteProperty.Y) == 4 || enemy_2.get(LedSpriteProperty.Y) == 4) {
                 lose()
+                break;
             }
         }
         enemy.delete()
         enemy_2.delete()
     }
+    win = 1
+    playerAlive = 0
+    player.delete()
+    enemy.delete()
+    enemy_2.delete()
+    startGame = 0
+    if (win == 1) {
+        for (let index = 0; index < 5; index++) {
+            basic.showAnimation(`
+            0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 1 0 1 0 0 0 0 0
+            0 0 0 0 0 0 1 1 1 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 
+            0 0 1 0 0 0 1 0 1 0 1 0 0 0 1 1 0 0 0 1 0 0 0 0 0
+            0 0 0 0 0 0 1 1 1 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0
+            0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 1 0 1 0 0 0 0 0
+            `, 100)
+        }
+        basic.showString("YOU WON")
+    }
 }
 let menu = 0
+let bullet: game.LedSprite = null
+let gameOver = 0
+let playerAlive = 0
 let enemy_2: game.LedSprite = null
 let enemy: game.LedSprite = null
-let bullet: game.LedSprite = null
-let playerAlive = 0
 let player: game.LedSprite = null
 let startGame = 0
-let gameOver = 0
+let win = 0
 let x1
 let x2
 basic.forever(function () {
