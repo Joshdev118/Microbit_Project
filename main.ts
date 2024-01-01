@@ -1,14 +1,12 @@
 // player movement A
 input.onButtonPressed(Button.A, function () {
     if (startGame == 1) {
-        if (player.get(LedSpriteProperty.X) == 0) {
-            player.set(LedSpriteProperty.X, 4)
-        } else {
-            player.change(LedSpriteProperty.X, -1)
+        switch (player.get(LedSpriteProperty.X)) {
+            case (0): player.set(LedSpriteProperty.X, 4)
+            case(4): player.change(LedSpriteProperty.X, -1)
         }
-        music.play(music.tonePlayable(156, music.beat(BeatFraction.Sixteenth)), music.PlaybackMode.UntilDone)
-    } else {
-    	
+    }else {
+
     }
 })
 function lose () {
@@ -39,18 +37,17 @@ input.onButtonPressed(Button.AB, function () {
             pause(20)
         }
         bullet.delete()
-    } else if (win == 1){
-    	control.reset()
+    } else if (win == 1) {
+        control.reset()
         win = 0
     }
 })
 // player movement B
 input.onButtonPressed(Button.B, function () {
     if (startGame == 1) {
-        if (player.get(LedSpriteProperty.X) == 4) {
-            player.set(LedSpriteProperty.X, 0)
-        } else {
-            player.change(LedSpriteProperty.X, 1)
+        switch (player.get(LedSpriteProperty.X)) {
+            case (4): player.set(LedSpriteProperty.X, 0)
+            case (0): player.change(LedSpriteProperty.X, 1)
         }
         music.play(music.tonePlayable(156, music.beat(BeatFraction.Sixteenth)), music.PlaybackMode.UntilDone)
     } else {
@@ -67,7 +64,7 @@ input.onGesture(Gesture.Shake, function () {
         basic.clearScreen()
         led.stopAnimation()
         enemyWave()
-    } else if (startGame == 0 && menu == 0) {
+    } else if (startGame == 0 && menu == 0 && win == 0) {
         menu = 1
     }
 })
@@ -118,7 +115,7 @@ function enemyWave () {
     enemy.delete()
     enemy_2.delete()
     startGame = 0
-    if (win == 1) {
+    while (win == 1) {
         for (let index = 0; index < 5; index++) {
             basic.showAnimation(`
             0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 1 0 1 0 0 0 0 0
@@ -133,13 +130,13 @@ function enemyWave () {
 }
 let menu = 0
 let bullet: game.LedSprite = null
+let win = 0
 let gameOver = 0
 let playerAlive = 0
 let enemy_2: game.LedSprite = null
 let enemy: game.LedSprite = null
 let player: game.LedSprite = null
 let startGame = 0
-let win = 0
 let x1
 let x2
 basic.forever(function () {
